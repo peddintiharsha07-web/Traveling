@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block body_class %}page-home{% endblock %}
+
+{% block content %}
+
+{# ---------- Hero ---------- #}
+<section class="hero" aria-labelledby="hero-title">
+  <svg class="hero__art" viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0b3c5d"/>
+        <stop offset=".55" stop-color="#2a7fb0"/>
+        <stop offset=".85" stop-color="#f2b38a"/>
+        <stop offset="1" stop-color="#f28c38"/>
+      </linearGradient>
+      <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#1b6d9c"/>
+        <stop offset="1" stop-color="#0b3c5d"/>
+      </linearGradient>
+    </defs>
+    <rect width="1440" height="800" fill="url(#sky)"/>
+    <circle class="hero__sun" cx="1080" cy="430" r="78" fill="#ffd8a8"/>
+    <path d="M0 560 L180 400 L320 500 L520 330 L720 520 L900 420 L1100 540 L1280 440 L1440 520 V800 H0Z" fill="#4a86ad" opacity=".55"/>
+    <path d="M0 620 L140 520 L300 600 L480 470 L680 610 L860 540 L1060 620 L1240 540 L1440 610 V800 H0Z" fill="#1f5a80" opacity=".85"/>
+    <rect y="650" width="1440" height="150" fill="url(#sea)"/>
+    <path d="M0 700 q60 -14 120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0" stroke="#fff" stroke-opacity=".25" stroke-width="3" fill="none"/>
+    <path d="M0 750 q60 -14 120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0" stroke="#fff" stroke-opacity=".15" stroke-width="3" fill="none"/>
+  </svg>
+  <div class="hero__shade" aria-hidden="true"></div>
+
+  <div class="container hero__content">
+    <h1 id="hero-title" class="hero__title">Every Journey Has a Story. Be Ready for the Unexpected.</h1>
+    <p class="hero__sub">Explore the world with confidence. Find travel solutions, discover nearby assistance, and overcome unexpected problems wherever your journey takes you.</p>
+    <div class="hero__actions">
+      <a class="btn btn--sun btn--lg" href="{% url 'core:destinations' %}">Explore Destinations</a>
+      <a class="btn btn--glass btn--lg" href="{% url 'core:problems' %}">Get Travel Help</a>
+    </div>
+  </div>
+</section>
+
+{# ---------- Popular destinations ---------- #}
+<section class="section" id="destinations" aria-labelledby="dest-title">
+  <div class="container">
+    <div class="section__head">
+      <h2 id="dest-title">Popular destinations</h2>
+      <p>Places travelers plan for most, with the things worth knowing before you go.</p>
+    </div>
+    {% if destinations %}
+    <div class="grid grid--cards">
+      {% for d in destinations %}{% include "partials/dest_card.html" %}{% endfor %}
+    </div>
+    <p class="section__more"><a class="btn btn--outline" href="{% url 'core:destinations' %}">See all destinations</a></p>
+    {% else %}
+    <p class="empty-inline">No destinations yet. Run <code>python manage.py seed_content</code>.</p>
+    {% endif %}
+  </div>
+</section>
+
+{# ---------- Common problems ---------- #}
+<section class="section section--tint" id="problems" aria-labelledby="prob-title">
+  <div class="container">
+    <div class="section__head">
+      <h2 id="prob-title">Common travel problems</h2>
+      <p>Pick the situation that sounds like yours and get steps you can act on right away.</p>
+    </div>
+    <ul class="grid grid--problems">
+      {% for p in problems %}
+      <li>
+        <a class="problem" href="{{ p.get_absolute_url }}">
+          <span class="problem__icon"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-{{ p.icon }}"/></svg></span>
+          <span class="problem__text">
+            <strong>{{ p.title }}</strong>
+            <span>{{ p.blurb }}</span>
+          </span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# ---------- Find nearby help ---------- #}
+<section class="section" id="help" aria-labelledby="help-title">
+  <div class="container help">
+    <div class="help__intro">
+      <h2 id="help-title">Find nearby help</h2>
+      <p>Choose a service and share your location or search a place. Results come from OpenStreetMap contributors, never from made-up listings.</p>
+      <div class="chips" role="group" aria-label="Service type">
+        {% for h in help_types %}
+        <a class="chip" href="{% url 'core:find_help' %}?type={{ h.key }}">
+          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-{{ h.icon }}"/></svg>{{ h.label }}
+        </a>
+        {% endfor %}
+      </div>
+      <a class="btn btn--sun" href="{% url 'core:find_help' %}">
+        <svg class="icon" aria-hidden="true"><use href="#i-locate"/></svg> Open the map
+      </a>
+    </div>
+    <div class="help__map">
+      <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+        <rect width="400" height="300" fill="#dff0f8"/>
+        <g stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round"><path d="M-10 220 C90 160 160 250 260 170 S380 120 420 140"/><path d="M120 -10 C140 90 90 160 150 310"/></g>
+        <g stroke="#bcdcec" stroke-width="2" fill="none"><path d="M0 60H400M0 130H400M0 200H400M0 270H400M70 0V300M160 0V300M250 0V300M340 0V300"/></g>
+      </svg>
+      <div class="help__teaser">
+        <svg class="icon icon--xl" aria-hidden="true"><use href="#i-pin"/></svg>
+        <p><strong>Hospitals, police, hotels, and more</strong></p>
+        <p>Open the map to see the nearest options around you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ---------- Safety tips ---------- #}
+<section class="section section--tint" id="safety" aria-labelledby="tips-title">
+  <div class="container">
+    <div class="section__head">
+      <h2 id="tips-title">Travel safety tips</h2>
+      <p>Small habits that make big problems easier to fix.</p>
+    </div>
+    <ul class="tips">
+      {% for t in tips %}
+      <li class="tip">
+        <svg class="icon icon--lg tip__icon" aria-hidden="true"><use href="#i-{{ t.icon }}"/></svg>
+        <div>
+          <h3>{{ t.title }}</h3>
+          <p>{{ t.text }}</p>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# ---------- How it works ---------- #}
+<section class="section" id="how" aria-labelledby="how-title">
+  <div class="container">
+    <div class="section__head">
+      <h2 id="how-title">How it works</h2>
+      <p>Four stops from trouble to resolved.</p>
+    </div>
+    <ol class="route">
+      {% for s in steps %}
+      <li class="route__stop">
+        <span class="route__dot" aria-hidden="true">{{ forloop.counter }}</span>
+        <h3>{{ s.title }}</h3>
+        <p>{{ s.text }}</p>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ---------- Stories ---------- #}
+<section class="section section--ocean" id="stories" aria-labelledby="story-title">
+  <div class="container">
+    <div class="section__head section__head--light">
+      <h2 id="story-title">Stories from the road</h2>
+      <p>Sample stories shown as placeholders until travelers share their own.</p>
+    </div>
+    <div class="stories">
+      {% for s in stories %}
+      <figure class="story">
+        <blockquote>{{ s.quote }}</blockquote>
+        <figcaption><strong>{{ s.name }}</strong> <span>{{ s.trip }}</span></figcaption>
+      </figure>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

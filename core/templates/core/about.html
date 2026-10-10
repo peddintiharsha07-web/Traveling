@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}About | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="page-head page-head--short">
+  <div class="container">
+    <h1>About this site</h1>
+    <p>Trips rarely go exactly to plan. This site helps you handle what happens next.</p>
+  </div>
+</section>
+
+<section class="section section--flush">
+  <div class="container detail">
+    <div class="detail__main prose">
+      <h2>Why it exists</h2>
+      <p>Lost bags, cancelled rooms, missed connections, and sudden storms are common, and the first hour matters. The guides here give you the order of steps, who to contact, and what to keep as proof, so you can act instead of searching in a panic.</p>
+
+      <h2>What you can do here</h2>
+      <ul class="checklist">
+        <li>Browse destinations and the practical things worth knowing before you go.</li>
+        <li>Read step-by-step guides for eight common travel problems.</li>
+        <li>Look up hospitals, police stations, hotels, restaurants, mechanics, and transport near you.</li>
+        <li>Create an account to report a problem, follow its status, and read replies from other travelers.</li>
+      </ul>
+
+      <h2>Where map results come from</h2>
+      <p>Nearby places are read from OpenStreetMap, a map built by volunteers. Coverage is good in many places and thin in others, so a missing result does not mean a service does not exist. Always confirm details by phone when you can.</p>
+
+      <h2>Your privacy</h2>
+      <p>When you use the map, your browser sends your coordinates to the map services to look up places. Our server does not receive or store them. Reports you submit are private unless you choose to share them with the community, and shared reports show only your username.</p>
+
+      <aside class="callout">
+        <svg class="icon icon--lg" aria-hidden="true"><use href="#i-shield"/></svg>
+        <p><strong>In an emergency</strong>, call your local emergency number first. This site offers guidance, not emergency dispatch, and its content is general information rather than legal, medical, or insurance advice.</p>
+      </aside>
+    </div>
+
+    <aside class="detail__side">
+      <div class="panel">
+        <h2 class="side-title">Get started</h2>
+        <p>Pick the situation closest to yours.</p>
+        <a class="btn btn--sun" href="{% url 'core:problems' %}">Browse travel problems</a>
+      </div>
+      <a class="btn btn--outline" href="{% url 'core:find_help' %}">Find nearby help</a>
+      <a class="btn btn--outline" href="{% url 'core:destinations' %}">Explore destinations</a>
+    </aside>
+  </div>
+</section>
+{% endblock %}

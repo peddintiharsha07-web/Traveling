@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Your dashboard | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="page-head page-head--short">
+  <div class="container dash-head">
+    <div>
+      <h1>Hello, {{ user.first_name|default:user.username }}</h1>
+      <p>Track your reports and see what other travelers have said.</p>
+    </div>
+    <a class="btn btn--sun btn--lg" href="{% url 'core:report_create' %}">Report a problem</a>
+  </div>
+</section>
+
+<section class="section section--flush">
+  <div class="container">
+    <dl class="stats">
+      <div class="stat"><dt>Total reports</dt><dd>{{ counts.total }}</dd></div>
+      <div class="stat"><dt>Open</dt><dd>{{ counts.open }}</dd></div>
+      <div class="stat"><dt>Resolved</dt><dd>{{ counts.resolved }}</dd></div>
+    </dl>
+
+    <div class="dash-links">
+      <a class="chip" href="{% url 'core:community' %}">Community reports</a>
+      <a class="chip" href="{% url 'core:notifications' %}">Notifications{% if unread_notifications %} ({{ unread_notifications }} new){% endif %}</a>
+      <a class="chip" href="{% url 'core:profile' %}">Edit profile</a>
+      <a class="chip" href="{% url 'core:contact' %}">Contact us</a>
+    </div>
+
+    <div class="dash-cols">
+      <div class="panel">
+        <h2 class="side-title">Latest notifications</h2>
+        {% if recent_notifications %}
+        <ul class="plain-list note-list">
+          {% for n in recent_notifications %}
+          <li><a href="{% url 'core:notification_open' n.pk %}"{% if not n.is_read %} class="is-unread"{% endif %}>{{ n.message }}</a> <span class="muted-sm">{{ n.created_at|timesince }} ago</span></li>
+          {% endfor %}
+        </ul>
+        <a class="section__more" href="{% url 'core:notifications' %}">See all</a>
+        {% else %}<p class="empty-inline">Nothing new. Updates from our team and replies to your reports show up here.</p>{% endif %}
+      </div>
+      <div class="panel">
+        <h2 class="side-title">Recent activity</h2>
+        {% if recent_activity %}
+        <ul class="plain-list note-list">
+          {% for a in recent_activity %}<li>{{ a.action }}{% if a.detail %}: {{ a.detail }}{% endif %} <span class="muted-sm">{{ a.created_at|timesince }} ago</span></li>{% endfor %}
+        </ul>
+        {% else %}<p class="empty-inline">Your recent actions will appear here.</p>{% endif %}
+      </div>
+    </div>
+
+    <h2 class="dash-title">Your reports</h2>
+    <div class="chips" role="group" aria-label="Filter by status">
+      <a class="chip{% if not status %} is-active{% endif %}" href="{% url 'core:dashboard' %}">All</a>
+      {% for value, label in statuses %}<a class="chip{% if status == value %} is-active{% endif %}" href="?status={{ value }}">{{ label }}</a>{% endfor %}
+    </div>
+    {% if reports %}
+    <table class="reports">
+      <thead>
+        <tr><th scope="col">Problem</th><th scope="col">Category</th><th scope="col">Date</th><th scope="col">Status</th><th scope="col">Replies</th></tr>
+      </thead>
+      <tbody>
+        {% for r in reports %}
+        <tr>
+          <td data-label="Problem"><a class="reports__title" href="{{ r.get_absolute_url }}">{{ r.title }}</a><span class="reports__loc">{{ r.location }}</span></td>
+          <td data-label="Category">{{ r.get_category_display }}</td>
+          <td data-label="Date">{{ r.date_of_problem|date:"M j, Y" }}</td>
+          <td data-label="Status">{% include "partials/status_badge.html" %}</td>
+          <td data-label="Replies">{{ r.reply_count }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% include "partials/pager.html" %}
+    {% else %}
+    <div class="empty">
+      <svg class="icon icon--xl" aria-hidden="true"><use href="#i-luggage"/></svg>
+      <h2>{% if status %}No reports with this status{% else %}No reports yet{% endif %}</h2>
+      <p>{% if status %}Try another status filter.{% else %}If something goes wrong on a trip, log it here and follow its progress.{% endif %}</p>
+      <a class="btn btn--sun" href="{% url 'core:report_create' %}">Report a problem</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

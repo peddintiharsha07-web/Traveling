@@ -1,0 +1,16 @@
+<article class="dest">
+  <div class="dest__media dest__media--{{ d.category }}">
+    {% if d.image %}
+      <img src="{{ d.image.url }}" alt="{{ d.name }}, {{ d.place }}" loading="lazy" class="dest__img">
+    {% else %}
+      {% include "partials/scene.html" with kind=d.category %}
+    {% endif %}
+    <span class="dest__tag">{{ d.get_category_display }}</span>
+  </div>
+  <div class="dest__body">
+    <h3>{{ d.name }}</h3>
+    <p class="dest__place"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-pin"/></svg> {{ d.place }}</p>
+    <p>{{ d.blurb }}</p>
+    <a class="btn btn--outline" href="{{ d.get_absolute_url }}">Explore {{ d.name }}</a>
+  </div>
+</article>

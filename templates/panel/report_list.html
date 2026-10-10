@@ -1,0 +1,61 @@
+{% extends "panel/base.html" %}
+{% block panel_title %}Reports{% endblock %}
+{% block panel_content %}
+<h1 class="panel-h1">Reports</h1>
+<form class="toolbar" method="get" role="search">
+  <label class="sr-only" for="q">Search reports</label>
+  <input class="input" id="q" name="q" type="search" value="{{ q }}" maxlength="80" placeholder="Search title, place, or username">
+  <label class="sr-only" for="status">Status</label>
+  <select class="input" id="status" name="status">
+    <option value="">Any status</option>
+    {% for value, label in statuses %}<option value="{{ value }}"{% if status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  <label class="sr-only" for="category">Category</label>
+  <select class="input" id="category" name="category">
+    <option value="">Any category</option>
+    {% for value, label in categories %}<option value="{{ value }}"{% if category == value %} selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  <label class="sr-only" for="shared">Visibility</label>
+  <select class="input" id="shared" name="shared">
+    <option value="">Private or shared</option>
+    <option value="yes"{% if shared == "yes" %} selected{% endif %}>Shared with community</option>
+    <option value="no"{% if shared == "no" %} selected{% endif %}>Private</option>
+  </select>
+  <label class="sr-only" for="sort">Sort by</label>
+  <select class="input" id="sort" name="sort">
+    <option value="newest"{% if sort == "newest" %} selected{% endif %}>Newest first</option>
+    <option value="oldest"{% if sort == "oldest" %} selected{% endif %}>Oldest first</option>
+    <option value="updated"{% if sort == "updated" %} selected{% endif %}>Recently updated</option>
+    <option value="status"{% if sort == "status" %} selected{% endif %}>Status</option>
+  </select>
+  <button class="btn btn--sun" type="submit">Apply</button>
+  {% if q or status or category or shared or sort != "newest" %}<a class="btn btn--ghost" href="{% url 'panel:report_list' %}">Reset</a>{% endif %}
+</form>
+<p class="result-count" role="status">{{ total }} report{{ total|pluralize }}</p>
+{% if page_obj %}
+<table class="reports">
+  <thead><tr><th scope="col">Problem</th><th scope="col">Traveler</th><th scope="col">Category</th><th scope="col">Status</th><th scope="col">Replies</th><th scope="col">Submitted</th><th scope="col">Actions</th></tr></thead>
+  <tbody>
+  {% for r in page_obj %}
+  <tr>
+    <td data-label="Problem"><a class="reports__title" href="{% url 'panel:report_manage' r.pk %}">{{ r.title }}</a><span class="reports__loc">{{ r.location }}{% if r.share_with_community %} &middot; shared{% endif %}</span></td>
+    <td data-label="Traveler">{{ r.user.username }}</td>
+    <td data-label="Category">{{ r.get_category_display }}</td>
+    <td data-label="Status">{% include "partials/status_badge.html" %}</td>
+    <td data-label="Replies">{{ r.reply_count }}</td>
+    <td data-label="Submitted">{{ r.created_at|date:"M j, Y" }}</td>
+    <td data-label="Actions" class="row-actions">
+      <a class="btn btn--outline btn--sm" href="{% url 'panel:report_manage' r.pk %}">Manage</a>
+      <form method="post" action="{% url 'panel:report_delete' r.pk %}" data-confirm="Delete the report “{{ r.title }}” and its replies? This cannot be undone.">
+        {% csrf_token %}<button class="btn btn--danger btn--sm" type="submit">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% include "partials/pager.html" %}
+{% else %}
+<div class="empty"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-luggage"/></svg><h2>No reports found</h2><p>Reports from travelers will appear here.</p></div>
+{% endif %}
+{% endblock %}

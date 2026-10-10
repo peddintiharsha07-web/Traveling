@@ -1,0 +1,12 @@
+<section class="error-page">
+  <div class="container">
+    <svg class="icon icon--xl" aria-hidden="true"><use href="#i-compass"/></svg>
+    <p class="error-page__code">Error {{ code }}</p>
+    <h1>{{ heading }}</h1>
+    <p>{{ message }}</p>
+    <div class="error-page__actions">
+      <a class="btn btn--sun btn--lg" href="{% url 'core:home' %}">Back to home</a>
+      <a class="btn btn--outline btn--lg" href="{% url 'core:problems' %}">Browse travel problems</a>
+    </div>
+  </div>
+</section>

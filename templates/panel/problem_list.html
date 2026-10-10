@@ -1,0 +1,42 @@
+{% extends "panel/base.html" %}
+{% block panel_title %}Problem guides{% endblock %}
+{% block panel_content %}
+<div class="panel-head"><h1 class="panel-h1">Problem guides</h1><a class="btn btn--sun" href="{% url 'panel:problem_create' %}">Add guide</a></div>
+<form class="toolbar" method="get" role="search">
+  <label class="sr-only" for="q">Search guides</label>
+  <input class="input" id="q" name="q" type="search" value="{{ q }}" maxlength="80" placeholder="Search title or description">
+  <label class="sr-only" for="sort">Sort by</label>
+  <select class="input" id="sort" name="sort">
+    <option value="order"{% if sort == "order" %} selected{% endif %}>Display order</option>
+    <option value="title"{% if sort == "title" %} selected{% endif %}>Title A–Z</option>
+    <option value="newest"{% if sort == "newest" %} selected{% endif %}>Newest first</option>
+  </select>
+  <button class="btn btn--sun" type="submit">Apply</button>
+  {% if q or sort != "order" %}<a class="btn btn--ghost" href="{% url 'panel:problem_list' %}">Reset</a>{% endif %}
+</form>
+<p class="result-count" role="status">{{ total }} guide{{ total|pluralize }}</p>
+{% if page_obj %}
+<table class="reports">
+  <thead><tr><th scope="col">Title</th><th scope="col">Order</th><th scope="col">Actions</th></tr></thead>
+  <tbody>
+  {% for p in page_obj %}
+  <tr>
+    <td data-label="Title"><a class="reports__title" href="{% url 'panel:problem_edit' p.pk %}">{{ p.title }}</a><span class="reports__loc">{{ p.blurb|truncatechars:80 }}</span></td>
+    <td data-label="Order">{{ p.order }}</td>
+    <td data-label="Actions" class="row-actions">
+      <a class="btn btn--outline btn--sm" href="{% url 'panel:problem_edit' p.pk %}">Edit</a>
+      <a class="btn btn--ghost btn--sm" href="{{ p.get_absolute_url }}">View</a>
+      <form method="post" action="{% url 'panel:problem_delete' p.pk %}" data-confirm="Delete the guide “{{ p.title }}”? This cannot be undone.">
+        {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button class="btn btn--danger btn--sm" type="submit">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% include "partials/pager.html" %}
+{% else %}
+<div class="empty"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-compass"/></svg><h2>No guides found</h2><p>Add one, or change the search.</p><a class="btn btn--sun" href="{% url 'panel:problem_create' %}">Add guide</a></div>
+{% endif %}
+{% endblock %}

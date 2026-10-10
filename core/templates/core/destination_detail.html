@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ d.name }} | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="detail-hero dest__media--{{ d.category }}">
+  {% if d.image %}<img src="{{ d.image.url }}" alt="" class="detail-hero__img">{% else %}{% include "partials/scene.html" with kind=d.category %}{% endif %}
+  <div class="detail-hero__shade" aria-hidden="true"></div>
+  <div class="container detail-hero__content">
+    <p class="detail-hero__crumb"><a href="{% url 'core:destinations' %}">Destinations</a></p>
+    <h1>{{ d.name }}</h1>
+    <p class="dest__place dest__place--light"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-pin"/></svg> {{ d.place }}, {{ d.get_category_display|lower }}</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container detail">
+    <div class="detail__main prose">
+      <p class="lead">{{ d.blurb }}</p>
+      {% if d.description %}<p>{{ d.description }}</p>{% endif %}
+      {% if d.travel_tip %}
+      <aside class="callout"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-compass"/></svg><p><strong>Before you go.</strong> {{ d.travel_tip }}</p></aside>
+      {% endif %}
+    </div>
+    <aside class="detail__side">
+      <h2 class="side-title">If something goes wrong</h2>
+      <a class="btn btn--sun" href="{% url 'core:problems' %}">Browse travel problems</a>
+      <a class="btn btn--outline" href="{% url 'core:find_help' %}">Find nearby help</a>
+    </aside>
+  </div>
+</section>
+
+{% if related %}
+<section class="section section--tint">
+  <div class="container">
+    <div class="section__head"><h2>More {{ d.get_category_display|lower }}</h2></div>
+    <div class="grid grid--cards">
+      {% for d in related %}{% include "partials/dest_card.html" %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

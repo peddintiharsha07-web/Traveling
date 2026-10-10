@@ -1,0 +1,56 @@
+<footer class="footer">
+  <div class="container footer__grid">
+    <div class="footer__about">
+      <a class="nav__brand" href="{% url 'core:home' %}">
+        <svg class="icon icon--lg" aria-hidden="true"><use href="#i-compass"/></svg>
+        <span>Unexpected<span class="nav__brand-sub"> Travel</span></span>
+      </a>
+      <p>Practical guidance for the moments no itinerary plans for.</p>
+      <ul class="social" aria-label="Social media">
+        <li><a href="#" aria-label="Instagram"><svg class="icon" aria-hidden="true"><use href="#i-instagram"/></svg></a></li>
+        <li><a href="#" aria-label="Facebook"><svg class="icon" aria-hidden="true"><use href="#i-facebook"/></svg></a></li>
+        <li><a href="#" aria-label="X"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></a></li>
+      </ul>
+    </div>
+
+    <nav aria-label="Explore">
+      <h2 class="footer__title">Explore</h2>
+      <ul>
+        <li><a href="{% url 'core:destinations' %}">Destinations</a></li>
+        <li><a href="{% url 'core:problems' %}">Travel problems</a></li>
+        <li><a href="{% url 'core:find_help' %}">Find help</a></li>
+        <li><a href="{% url 'core:about' %}">About</a></li>
+        <li><a href="{% url 'core:contact' %}">Contact us</a></li>
+        <li><a href="{% url 'core:search' %}">Search</a></li>
+      </ul>
+    </nav>
+
+    <nav aria-label="Account">
+      <h2 class="footer__title">Your account</h2>
+      <ul>
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+        <li><a href="{% url 'core:report_create' %}">Report a problem</a></li>
+        <li><a href="{% url 'core:community' %}">Community</a></li>
+        <li><a href="{% url 'core:profile' %}">Profile</a></li>
+        <li><a href="{% url 'core:notifications' %}">Notifications</a></li>
+        {% else %}
+        <li><a href="{% url 'core:login' %}">Log in</a></li>
+        <li><a href="{% url 'core:register' %}">Create an account</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+
+    <div>
+      <h2 class="footer__title">Contact</h2>
+      <ul class="footer__contact">
+        <li><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg> help@example.com</li>
+        <li><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg> +00 000 000 0000</li>
+      </ul>
+      <p class="footer__note">Replace these placeholder details before launch.</p>
+    </div>
+  </div>
+  <div class="container footer__legal">
+    <p>In an emergency, call your local emergency number first. This site offers guidance, not emergency dispatch.</p>
+  </div>
+</footer>

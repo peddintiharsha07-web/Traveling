@@ -1,0 +1,16 @@
+{% extends "panel/base.html" %}
+{% block panel_title %}{{ msg.subject }}{% endblock %}
+{% block panel_content %}
+<p class="detail-hero__crumb"><a href="{% url 'panel:message_list' %}">&larr; Back to messages</a></p>
+<h1 class="panel-h1">{{ msg.subject }}</h1>
+<div class="panel">
+  <p class="panel__row"><span>From</span> {{ msg.name }} &lt;{{ msg.email }}&gt;</p>
+  <p class="panel__row"><span>Received</span> {{ msg.created_at|date:"M j, Y, g:i a" }}</p>
+  {% if msg.user %}<p class="panel__row"><span>Account</span> <a href="{% url 'panel:user_edit' msg.user.pk %}">{{ msg.user.username }}</a></p>{% endif %}
+</div>
+<div class="form-card"><p class="prose pre-line">{{ msg.message }}</p></div>
+<div class="form-actions" style="margin-top: var(--space-3)">
+  <a class="btn btn--sun" href="mailto:{{ msg.email }}?subject=Re:%20{{ msg.subject|urlencode }}">Reply by email</a>
+  <form method="post" action="{% url 'panel:message_delete' msg.pk %}" data-confirm="Delete this message?">{% csrf_token %}<button class="btn btn--danger" type="submit">Delete</button></form>
+</div>
+{% endblock %}

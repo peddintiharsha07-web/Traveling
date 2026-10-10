@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}{{ p.title }} | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="page-head page-head--short">
+  <div class="container">
+    <p class="detail-hero__crumb"><a href="{% url 'core:problems' %}">Travel problems</a></p>
+    <div class="problem-head">
+      <span class="problem__icon problem__icon--lg"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-{{ p.icon }}"/></svg></span>
+      <h1>{{ p.title }}</h1>
+    </div>
+    <p>{{ p.overview }}</p>
+  </div>
+</section>
+
+<section class="section section--flush">
+  <div class="container detail">
+    <div class="detail__main">
+      <h2>What to do, in order</h2>
+      <ol class="steps">
+        {% for s in p.steps_list %}<li>{{ s }}</li>{% endfor %}
+      </ol>
+
+      <h2>Keep as proof</h2>
+      <ul class="checklist">
+        {% for s in p.proof_list %}<li>{{ s }}</li>{% endfor %}
+      </ul>
+
+      <h2>Next time</h2>
+      <ul class="checklist">
+        {% for s in p.prevention_list %}<li>{{ s }}</li>{% endfor %}
+      </ul>
+    </div>
+
+    <aside class="detail__side">
+      <div class="panel">
+        <h2 class="side-title">Who to contact</h2>
+        <ul class="plain-list">
+          {% for s in p.contacts_list %}<li>{{ s }}</li>{% endfor %}
+        </ul>
+        <p class="panel__note">In danger? Call your local emergency number first.</p>
+      </div>
+      <a class="btn btn--sun" href="{% url 'core:find_help' %}">Find nearby help</a>
+      <a class="btn btn--outline" href="{% url 'core:report_create' %}?category={{ p.slug }}">Report this problem</a>
+    </aside>
+  </div>
+</section>
+
+<section class="section section--tint">
+  <div class="container">
+    <div class="section__head"><h2>Other problems</h2></div>
+    <ul class="grid grid--problems">
+      {% for o in others|slice:":4" %}
+      <li>
+        <a class="problem" href="{{ o.get_absolute_url }}">
+          <span class="problem__icon"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-{{ o.icon }}"/></svg></span>
+          <span class="problem__text"><strong>{{ o.title }}</strong><span>{{ o.blurb }}</span></span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Access denied | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+{% if csrf_problem %}
+  {% include "partials/error_body.html" with code="403" heading="Your session expired" message="For your security, the form could not be submitted. Go back, refresh the page, and try again." %}
+{% else %}
+  {% include "partials/error_body.html" with code="403" heading="You do not have access" message="This page is not available to your account." %}
+{% endif %}
+{% endblock %}

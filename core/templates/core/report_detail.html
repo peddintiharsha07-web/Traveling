@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{{ r.title }} | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="page-head page-head--short">
+  <div class="container">
+    <p class="detail-hero__crumb">
+      {% if is_owner %}<a href="{% url 'core:dashboard' %}">Dashboard</a>{% else %}<a href="{% url 'core:community' %}">Community</a>{% endif %}
+    </p>
+    <h1>{{ r.title }}</h1>
+    <p class="report-meta">{% include "partials/status_badge.html" %}
+      <span>{{ r.get_category_display }}</span>
+      <span>{{ r.location }}</span>
+      <span>{{ r.date_of_problem|date:"M j, Y" }}</span>
+    </p>
+  </div>
+</section>
+
+<section class="section section--flush">
+  <div class="container detail">
+    <div class="detail__main">
+      <h2>What happened</h2>
+      <p class="prose pre-line">{{ r.description }}</p>
+      {% if r.image %}
+      <figure class="report-image"><img src="{% url 'core:report_image' r.pk %}" alt="Photo attached to this report" loading="lazy"></figure>
+      {% endif %}
+
+      <h2>Replies ({{ responses|length }})</h2>
+      {% if responses %}
+      <ul class="replies">
+        {% for resp in responses %}
+        <li class="reply">
+          <p class="reply__meta"><strong>{{ resp.author.username }}</strong>{% if resp.author.is_staff %} <span class="badge badge--staff">Team</span>{% endif %} <span>{{ resp.created_at|date:"M j, Y" }}</span></p>
+          <p class="pre-line">{{ resp.body }}</p>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="empty-inline">No replies yet.</p>
+      {% endif %}
+
+      <form class="form-card" method="post" novalidate>
+        {% csrf_token %}
+        {% include "partials/field.html" with field=form.body %}
+        <button class="btn btn--sun" type="submit" data-loading="Posting…">Post reply</button>
+      </form>
+    </div>
+
+    <aside class="detail__side">
+      {% if r.staff_note %}
+      <div class="panel panel--note"><h2 class="side-title">Update from our team</h2><p class="pre-line">{{ r.staff_note }}</p></div>
+      {% endif %}
+      <div class="panel">
+        <h2 class="side-title">Report details</h2>
+        <p class="panel__row"><span>Submitted</span> {{ r.created_at|date:"M j, Y" }}</p>
+        <p class="panel__row"><span>Last updated</span> {{ r.updated_at|date:"M j, Y" }}</p>
+        <p class="panel__row"><span>Visibility</span> {% if r.share_with_community %}Shared with the community{% else %}Private{% endif %}</p>
+        {% if not is_owner %}<p class="panel__row"><span>Posted by</span> {{ r.user.username }}</p>{% endif %}
+      </div>
+      {% if is_owner %}
+      <div class="panel">
+        <h2 class="side-title">Manage your report</h2>
+        {% if can_edit %}<a class="btn btn--outline btn--block" href="{% url 'core:report_edit' r.pk %}">Edit report</a>
+        {% else %}<p class="muted-sm">Editing is locked once our team starts reviewing a report.</p>{% endif %}
+        <form method="post" action="{% url 'core:report_delete' r.pk %}" data-confirm="Delete this report? This cannot be undone." class="stack-top">
+          {% csrf_token %}
+          <button class="btn btn--danger btn--block" type="submit">Delete report</button>
+        </form>
+      </div>
+      {% endif %}
+      <a class="btn btn--outline" href="{% url 'core:problems' %}">Browse problem guides</a>
+    </aside>
+  </div>
+</section>
+{% endblock %}

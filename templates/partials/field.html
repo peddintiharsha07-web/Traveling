@@ -1,0 +1,11 @@
+{# Usage: {% include "partials/field.html" with field=form.title %} #}
+<div class="field{% if field.errors %} has-error{% endif %}{% if field.widget_type == 'checkbox' %} field--check{% endif %}">
+  {% if field.widget_type == 'checkbox' %}
+    <label class="check-label" for="{{ field.id_for_label }}">{{ field }}<span>{{ field.label }}</span></label>
+  {% else %}
+    <label for="{{ field.id_for_label }}">{{ field.label }}{% if not field.field.required %} <span class="optional">(optional)</span>{% endif %}</label>
+    {{ field }}
+  {% endif %}
+  {% if field.help_text %}<div class="field__help">{{ field.help_text|safe }}</div>{% endif %}
+  {% for e in field.errors %}<p class="field__error" role="alert">{{ e }}</p>{% endfor %}
+</div>

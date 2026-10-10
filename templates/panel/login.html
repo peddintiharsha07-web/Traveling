@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Admin log in | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="auth">
+  <div class="auth__art dest__media--mountains" aria-hidden="true">
+    {% include "partials/scene.html" with kind="mountains" %}
+    <div class="auth__art-text"><p>Administrator access. Manage users, content, and reports.</p></div>
+  </div>
+  <div class="auth__panel">
+    <div class="auth__card">
+      <h1>Admin log in</h1>
+      <p class="auth__sub">Not an administrator? <a href="{% url 'core:login' %}">Use the traveler log in</a></p>
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="form-alert" role="alert">{% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}</div>{% endif %}
+        {% include "partials/field.html" with field=form.username %}
+        {% include "partials/field.html" with field=form.password %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <button class="btn btn--sun btn--lg btn--block" type="submit" data-loading="Signing in…">Log in to the panel</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

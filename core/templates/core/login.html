@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Log in | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="auth">
+  <div class="auth__art dest__media--mountains" aria-hidden="true">
+    {% include "partials/scene.html" with kind="mountains" %}
+    <div class="auth__art-text"><p>Welcome back. Your reports and replies are waiting.</p></div>
+  </div>
+  <div class="auth__panel">
+    <div class="auth__card">
+      <h1>Log in</h1>
+      <p class="auth__sub">New here? <a href="{% url 'core:register' %}">Create an account</a></p>
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="form-alert" role="alert">{% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}</div>{% endif %}
+        {% include "partials/field.html" with field=form.username %}
+        {% include "partials/field.html" with field=form.password %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <p class="auth__sub"><a href="{% url 'core:password_reset' %}">Forgot your password?</a></p>
+        <button class="btn btn--sun btn--lg btn--block" type="submit">Log in</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

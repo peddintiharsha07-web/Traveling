@@ -1,0 +1,76 @@
+{% extends "panel/base.html" %}
+{% block panel_title %}Dashboard{% endblock %}
+{% block panel_content %}
+<h1 class="panel-h1">Dashboard</h1>
+
+{% if alerts %}
+<ul class="alerts" aria-label="Important updates">
+  {% for a in alerts %}<li><a href="{{ a.url }}">{{ a.text }}</a></li>{% endfor %}
+</ul>
+{% else %}
+<p class="alerts alerts--clear">All caught up. No new reports or unread messages.</p>
+{% endif %}
+
+<dl class="stats stats--4">
+  <div class="stat"><dt>Users</dt><dd>{{ stats.users }}</dd><span class="muted-sm">{{ stats.active_users }} active &middot; {{ stats.new_users }} new this week</span></div>
+  <div class="stat"><dt>Reports</dt><dd>{{ stats.reports }}</dd><span class="muted-sm">{{ stats.open_reports }} open &middot; {{ stats.new_reports_week }} this week</span></div>
+  <div class="stat"><dt>Content</dt><dd>{{ stats.destinations }}</dd><span class="muted-sm">destinations &middot; {{ stats.problems }} guides</span></div>
+  <div class="stat"><dt>Engagement</dt><dd>{{ stats.replies }}</dd><span class="muted-sm">replies &middot; {{ stats.messages }} messages</span></div>
+</dl>
+
+<div class="dash-cols">
+  <section class="panel" aria-labelledby="h-status">
+    <h2 class="side-title" id="h-status">Reports by status</h2>
+    <ul class="plain-list status-list">
+      {% for s in status_cards %}
+      <li><a href="{% url 'panel:report_list' %}?status={{ s.key }}"><span class="badge badge--{{ s.key }}">{{ s.label }}</span> <strong>{{ s.n }}</strong></a></li>
+      {% endfor %}
+    </ul>
+  </section>
+  <section class="panel" aria-labelledby="h-daily">
+    <h2 class="side-title" id="h-daily">New reports, last 7 days</h2>
+    <div class="bars bars--v" role="img" aria-label="Bar chart of new reports per day for the last seven days">
+      {% for d in daily %}
+      <div class="bars__col"><span class="bars__n">{{ d.n }}</span><span class="bars__bar" style="height: {{ d.pct }}%"></span><span class="bars__label">{{ d.day|date:"D" }}</span></div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+<section class="panel" aria-labelledby="h-cat">
+  <h2 class="side-title" id="h-cat">Top problem categories</h2>
+  {% if categories %}
+  <ul class="bars bars--h plain-list">
+    {% for c in categories %}
+    <li><span class="bars__name">{{ c.label }}</span><span class="bars__track"><span class="bars__fill" style="width: {{ c.pct }}%"></span></span><strong>{{ c.n }}</strong></li>
+    {% endfor %}
+  </ul>
+  {% else %}<p class="empty-inline">No reports yet, so there is nothing to chart.</p>{% endif %}
+</section>
+
+<div class="dash-cols">
+  <section class="panel" aria-labelledby="h-rr">
+    <h2 class="side-title" id="h-rr">Latest reports</h2>
+    {% if recent_reports %}
+    <ul class="plain-list note-list">
+      {% for r in recent_reports %}<li><a href="{% url 'panel:report_manage' r.pk %}">{{ r.title }}</a> {% include "partials/status_badge.html" %} <span class="muted-sm">by {{ r.user.username }}, {{ r.created_at|timesince }} ago</span></li>{% endfor %}
+    </ul>
+    {% else %}<p class="empty-inline">No reports yet.</p>{% endif %}
+  </section>
+  <section class="panel" aria-labelledby="h-ru">
+    <h2 class="side-title" id="h-ru">Newest users</h2>
+    <ul class="plain-list note-list">
+      {% for u in recent_users %}<li><a href="{% url 'panel:user_edit' u.pk %}">{{ u.username }}</a> <span class="muted-sm">joined {{ u.date_joined|timesince }} ago</span></li>{% endfor %}
+    </ul>
+  </section>
+</div>
+
+<section class="panel" aria-labelledby="h-rm">
+  <h2 class="side-title" id="h-rm">Latest contact messages</h2>
+  {% if recent_messages %}
+  <ul class="plain-list note-list">
+    {% for m in recent_messages %}<li><a href="{% url 'panel:message_detail' m.pk %}"{% if not m.is_read %} class="is-unread"{% endif %}>{{ m.subject }}</a> <span class="muted-sm">from {{ m.name }}, {{ m.created_at|timesince }} ago</span></li>{% endfor %}
+  </ul>
+  {% else %}<p class="empty-inline">No messages yet.</p>{% endif %}
+</section>
+{% endblock %}

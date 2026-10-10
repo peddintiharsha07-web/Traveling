@@ -1,0 +1,40 @@
+{% extends "panel/base.html" %}
+{% block panel_title %}Messages{% endblock %}
+{% block panel_content %}
+<h1 class="panel-h1">Contact messages</h1>
+<form class="toolbar" method="get" role="search">
+  <label class="sr-only" for="q">Search messages</label>
+  <input class="input" id="q" name="q" type="search" value="{{ q }}" maxlength="80" placeholder="Search subject, sender, or text">
+  <label class="sr-only" for="status">Status</label>
+  <select class="input" id="status" name="status">
+    <option value="">Read and unread</option>
+    <option value="unread"{% if status == "unread" %} selected{% endif %}>Unread</option>
+    <option value="read"{% if status == "read" %} selected{% endif %}>Read</option>
+  </select>
+  <button class="btn btn--sun" type="submit">Apply</button>
+  {% if q or status %}<a class="btn btn--ghost" href="{% url 'panel:message_list' %}">Reset</a>{% endif %}
+</form>
+<p class="result-count" role="status">{{ total }} message{{ total|pluralize }}</p>
+{% if page_obj %}
+<table class="reports">
+  <thead><tr><th scope="col">Subject</th><th scope="col">From</th><th scope="col">Received</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
+  <tbody>
+  {% for m in page_obj %}
+  <tr>
+    <td data-label="Subject"><a class="reports__title" href="{% url 'panel:message_detail' m.pk %}">{{ m.subject }}</a><span class="reports__loc">{{ m.message|truncatechars:80 }}</span></td>
+    <td data-label="From">{{ m.name }}<span class="reports__loc">{{ m.email }}</span></td>
+    <td data-label="Received">{{ m.created_at|date:"M j, Y, g:i a" }}</td>
+    <td data-label="Status">{% if m.is_read %}<span class="badge badge--closed">Read</span>{% else %}<span class="badge badge--in_review">Unread</span>{% endif %}</td>
+    <td data-label="Actions" class="row-actions">
+      <a class="btn btn--outline btn--sm" href="{% url 'panel:message_detail' m.pk %}">Open</a>
+      <form method="post" action="{% url 'panel:message_delete' m.pk %}" data-confirm="Delete this message?">{% csrf_token %}<button class="btn btn--danger btn--sm" type="submit">Delete</button></form>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% include "partials/pager.html" %}
+{% else %}
+<div class="empty"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-mail"/></svg><h2>No messages</h2><p>Messages sent from the contact page will appear here.</p></div>
+{% endif %}
+{% endblock %}

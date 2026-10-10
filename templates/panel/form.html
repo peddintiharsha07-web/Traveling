@@ -1,0 +1,37 @@
+{% extends "panel/base.html" %}
+{% block panel_title %}{{ title }}{% endblock %}
+{% block panel_content %}
+<p class="detail-hero__crumb"><a href="{{ back_url }}">&larr; Back to list</a>{% if view_url %} &middot; <a href="{{ view_url }}">View on site</a>{% endif %}</p>
+<h1 class="panel-h1">{{ title }}</h1>
+<form class="form-card" method="post"{% if multipart %} enctype="multipart/form-data"{% endif %} novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="form-alert" role="alert">{% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}</div>{% endif %}
+  {% for field in form %}{% include "partials/field.html" with field=field %}{% endfor %}
+  <div class="form-actions">
+    <button class="btn btn--sun btn--lg" type="submit" data-loading="Saving…">{{ submit }}</button>
+    <a class="btn btn--ghost btn--lg" href="{{ back_url }}">Cancel</a>
+  </div>
+</form>
+{% if reports %}
+<section class="panel" style="margin-top: var(--space-3)">
+  <h2 class="side-title">Recent reports by this user</h2>
+  <ul class="plain-list note-list">
+    {% for r in reports %}<li><a href="{% url 'panel:report_manage' r.pk %}">{{ r.title }}</a> {% include "partials/status_badge.html" %}</li>{% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% if slug_source %}
+<script>
+  /* Suggest a slug from the title while the slug field is still empty. */
+  (function () {
+    var src = document.getElementById("{{ slug_source }}"), slug = document.getElementById("id_slug");
+    if (!src || !slug) return;
+    src.addEventListener("input", function () {
+      if (slug.dataset.touched) return;
+      slug.value = src.value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    });
+    slug.addEventListener("input", function () { slug.dataset.touched = "1"; });
+  })();
+</script>
+{% endif %}
+{% endblock %}

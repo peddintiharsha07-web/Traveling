@@ -1,0 +1,64 @@
+{% extends "panel/base.html" %}
+{% block panel_title %}Users{% endblock %}
+{% block panel_content %}
+<h1 class="panel-h1">Users</h1>
+<form class="toolbar" method="get" role="search">
+  <label class="sr-only" for="q">Search users</label>
+  <input class="input" id="q" name="q" type="search" value="{{ q }}" maxlength="80" placeholder="Search name, username, or email">
+  <label class="sr-only" for="status">Status</label>
+  <select class="input" id="status" name="status">
+    <option value="">Any status</option>
+    <option value="active"{% if status == "active" %} selected{% endif %}>Active</option>
+    <option value="inactive"{% if status == "inactive" %} selected{% endif %}>Deactivated</option>
+  </select>
+  <label class="sr-only" for="role">Role</label>
+  <select class="input" id="role" name="role">
+    <option value="">Any role</option>
+    <option value="member"{% if role == "member" %} selected{% endif %}>Travelers</option>
+    <option value="staff"{% if role == "staff" %} selected{% endif %}>Administrators</option>
+  </select>
+  <label class="sr-only" for="sort">Sort by</label>
+  <select class="input" id="sort" name="sort">
+    <option value="newest"{% if sort == "newest" %} selected{% endif %}>Newest first</option>
+    <option value="oldest"{% if sort == "oldest" %} selected{% endif %}>Oldest first</option>
+    <option value="name"{% if sort == "name" %} selected{% endif %}>Username A–Z</option>
+    <option value="reports"{% if sort == "reports" %} selected{% endif %}>Most reports</option>
+  </select>
+  <button class="btn btn--sun" type="submit">Apply</button>
+  {% if q or status or role or sort != "newest" %}<a class="btn btn--ghost" href="{% url 'panel:user_list' %}">Reset</a>{% endif %}
+</form>
+<p class="result-count" role="status">{{ total }} user{{ total|pluralize }}</p>
+
+{% if page_obj %}
+<table class="reports">
+  <thead><tr><th scope="col">User</th><th scope="col">Email</th><th scope="col">Role</th><th scope="col">Status</th><th scope="col">Reports</th><th scope="col">Joined</th><th scope="col">Actions</th></tr></thead>
+  <tbody>
+  {% for u in page_obj %}
+  <tr>
+    <td data-label="User"><a class="reports__title" href="{% url 'panel:user_edit' u.pk %}">{{ u.username }}</a><span class="reports__loc">{{ u.get_full_name }}</span></td>
+    <td data-label="Email">{{ u.email|default:"—" }}</td>
+    <td data-label="Role">{% if u.is_superuser %}Superuser{% elif u.is_staff %}Administrator{% else %}Traveler{% endif %}</td>
+    <td data-label="Status">{% if u.is_active %}<span class="badge badge--resolved">Active</span>{% else %}<span class="badge badge--closed">Deactivated</span>{% endif %}</td>
+    <td data-label="Reports">{{ u.report_count }}</td>
+    <td data-label="Joined">{{ u.date_joined|date:"M j, Y" }}</td>
+    <td data-label="Actions" class="row-actions">
+      <a class="btn btn--outline btn--sm" href="{% url 'panel:user_edit' u.pk %}">Edit</a>
+      {% if u.pk != user.pk %}
+      <form method="post" action="{% url 'panel:user_toggle' u.pk %}" data-confirm="{% if u.is_active %}Deactivate {{ u.username }}? They will not be able to log in.{% else %}Reactivate {{ u.username }}?{% endif %}">
+        {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button class="btn btn--outline btn--sm" type="submit">{% if u.is_active %}Deactivate{% else %}Activate{% endif %}</button>
+      </form>
+      <form method="post" action="{% url 'panel:user_delete' u.pk %}" data-confirm="Permanently delete {{ u.username }} and all of their reports? This cannot be undone.">
+        {% csrf_token %}<button class="btn btn--danger btn--sm" type="submit">Delete</button>
+      </form>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% include "partials/pager.html" %}
+{% else %}
+<div class="empty"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-search"/></svg><h2>No users match</h2><p>Try different filters.</p></div>
+{% endif %}
+{% endblock %}

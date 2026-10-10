@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Contact us | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="page-head page-head--short">
+  <div class="container">
+    <h1>Contact us</h1>
+    <p>Questions, feedback, or a guide you think we should add? Send us a note. For emergencies, call your local emergency number first.</p>
+  </div>
+</section>
+<section class="section section--flush">
+  <div class="container container--narrow">
+    <form class="form-card" method="post" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="form-alert" role="alert">{% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}</div>{% endif %}
+      <div class="form-grid">
+        {% include "partials/field.html" with field=form.name %}
+        {% include "partials/field.html" with field=form.email %}
+        <div class="form-grid__wide">{% include "partials/field.html" with field=form.subject %}</div>
+        <div class="form-grid__wide">{% include "partials/field.html" with field=form.message %}</div>
+      </div>
+      <div class="hp" aria-hidden="true">{{ form.website.label_tag }} {{ form.website }}</div>
+      <div class="form-actions">
+        <button class="btn btn--sun btn--lg" type="submit" data-loading="Sending…">Send message</button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

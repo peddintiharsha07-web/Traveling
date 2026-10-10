@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Destinations | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="page-head page-head--short">
+  <div class="container">
+    <h1>Destinations</h1>
+    <p>Search by name or place, or narrow down by the kind of trip you want.</p>
+  </div>
+</section>
+
+<section class="section section--flush">
+  <div class="container">
+    <form class="filters" method="get" action="{% url 'core:destinations' %}" role="search">
+      <div class="search">
+        <label class="sr-only" for="q">Search destinations</label>
+        <svg class="icon search__icon" aria-hidden="true"><use href="#i-search"/></svg>
+        <input class="search__input" id="q" name="q" type="search" value="{{ q }}" maxlength="80" placeholder="Search by name or place" autocomplete="off">
+        {% if category %}<input type="hidden" name="category" value="{{ category }}">{% endif %}
+        <button class="btn btn--sun search__btn" type="submit">Search</button>
+      </div>
+      <div class="chips" role="group" aria-label="Category">
+        <a class="chip{% if not category %} is-active{% endif %}" href="?{% if q %}q={{ q|urlencode }}{% endif %}"{% if not category %} aria-current="true"{% endif %}>All</a>
+        {% for value, label in categories %}
+        <a class="chip{% if category == value %} is-active{% endif %}" href="?category={{ value }}{% if q %}&amp;q={{ q|urlencode }}{% endif %}"{% if category == value %} aria-current="true"{% endif %}>{{ label }}</a>
+        {% endfor %}
+      </div>
+    </form>
+
+    <p class="result-count" role="status">
+      {{ total }} destination{{ total|pluralize }} found{% if q or category %}. <a href="{% url 'core:destinations' %}">Clear filters</a>{% endif %}
+    </p>
+
+    {% if destinations %}
+    <div class="grid grid--cards">
+      {% for d in destinations %}{% include "partials/dest_card.html" %}{% endfor %}
+    </div>
+    {% include "partials/pager.html" %}
+    {% else %}
+    <div class="empty">
+      <svg class="icon icon--xl" aria-hidden="true"><use href="#i-search"/></svg>
+      <h2>No destinations match</h2>
+      <p>Try a different spelling, a broader search, or a different category.</p>
+      <a class="btn btn--outline" href="{% url 'core:destinations' %}">Show all destinations</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

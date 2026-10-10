@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Search | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="page-head page-head--short">
+  <div class="container">
+    <h1>Search the site</h1>
+    <p>Find destinations and problem guides{% if user.is_authenticated %}, plus your reports and community reports{% endif %}.</p>
+  </div>
+</section>
+<section class="section section--flush">
+  <div class="container">
+    <form class="filters" method="get" action="{% url 'core:search' %}" role="search">
+      <div class="search">
+        <label class="sr-only" for="q">Search</label>
+        <svg class="icon search__icon" aria-hidden="true"><use href="#i-search"/></svg>
+        <input class="search__input" id="q" name="q" type="search" value="{{ q }}" maxlength="80" placeholder="Try “passport”, “Bali”, or “delay”" autocomplete="off" autofocus>
+        <button class="btn btn--sun search__btn" type="submit">Search</button>
+      </div>
+    </form>
+
+    {% if too_short %}
+      <p class="result-count" role="status">Type at least two characters to search.</p>
+    {% elif q %}
+      <p class="result-count" role="status">{{ total }} result{{ total|pluralize }} for “{{ q }}”.</p>
+      {% if total == 0 %}
+      <div class="empty">
+        <svg class="icon icon--xl" aria-hidden="true"><use href="#i-search"/></svg>
+        <h2>No results</h2>
+        <p>Check the spelling or try a broader word.</p>
+      </div>
+      {% endif %}
+
+      {% if results.destinations %}
+      <h2 class="dash-title">Destinations</h2>
+      <ul class="plain-list result-list">
+        {% for d in results.destinations %}<li><a href="{{ d.get_absolute_url }}"><strong>{{ d.name }}</strong></a> <span class="muted-sm">{{ d.place }} &middot; {{ d.blurb }}</span></li>{% endfor %}
+      </ul>
+      {% endif %}
+      {% if results.problems %}
+      <h2 class="dash-title">Problem guides</h2>
+      <ul class="plain-list result-list">
+        {% for p in results.problems %}<li><a href="{{ p.get_absolute_url }}"><strong>{{ p.title }}</strong></a> <span class="muted-sm">{{ p.blurb }}</span></li>{% endfor %}
+      </ul>
+      {% endif %}
+      {% if results.reports %}
+      <h2 class="dash-title">Reports</h2>
+      <ul class="plain-list result-list">
+        {% for r in results.reports %}<li><a href="{{ r.get_absolute_url }}"><strong>{{ r.title }}</strong></a> <span class="muted-sm">{{ r.location }} &middot; by {{ r.user.username }}</span></li>{% endfor %}
+      </ul>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

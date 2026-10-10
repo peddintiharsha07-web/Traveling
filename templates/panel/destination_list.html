@@ -1,0 +1,56 @@
+{% extends "panel/base.html" %}
+{% block panel_title %}Destinations{% endblock %}
+{% block panel_content %}
+<div class="panel-head"><h1 class="panel-h1">Destinations</h1><a class="btn btn--sun" href="{% url 'panel:destination_create' %}">Add destination</a></div>
+<form class="toolbar" method="get" role="search">
+  <label class="sr-only" for="q">Search destinations</label>
+  <input class="input" id="q" name="q" type="search" value="{{ q }}" maxlength="80" placeholder="Search name or place">
+  <label class="sr-only" for="category">Category</label>
+  <select class="input" id="category" name="category">
+    <option value="">All categories</option>
+    {% for value, label in categories %}<option value="{{ value }}"{% if category == value %} selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  <label class="sr-only" for="featured">Featured</label>
+  <select class="input" id="featured" name="featured">
+    <option value="">Featured or not</option>
+    <option value="yes"{% if featured == "yes" %} selected{% endif %}>Featured only</option>
+    <option value="no"{% if featured == "no" %} selected{% endif %}>Not featured</option>
+  </select>
+  <label class="sr-only" for="sort">Sort by</label>
+  <select class="input" id="sort" name="sort">
+    <option value="name"{% if sort == "name" %} selected{% endif %}>Name A–Z</option>
+    <option value="place"{% if sort == "place" %} selected{% endif %}>Place A–Z</option>
+    <option value="newest"{% if sort == "newest" %} selected{% endif %}>Newest first</option>
+    <option value="featured"{% if sort == "featured" %} selected{% endif %}>Featured first</option>
+  </select>
+  <button class="btn btn--sun" type="submit">Apply</button>
+  {% if q or category or featured or sort != "name" %}<a class="btn btn--ghost" href="{% url 'panel:destination_list' %}">Reset</a>{% endif %}
+</form>
+<p class="result-count" role="status">{{ total }} destination{{ total|pluralize }}</p>
+{% if page_obj %}
+<table class="reports">
+  <thead><tr><th scope="col">Name</th><th scope="col">Place</th><th scope="col">Category</th><th scope="col">Featured</th><th scope="col">Actions</th></tr></thead>
+  <tbody>
+  {% for d in page_obj %}
+  <tr>
+    <td data-label="Name"><a class="reports__title" href="{% url 'panel:destination_edit' d.pk %}">{{ d.name }}</a><span class="reports__loc">{{ d.blurb|truncatechars:70 }}</span></td>
+    <td data-label="Place">{{ d.place }}</td>
+    <td data-label="Category">{{ d.get_category_display }}</td>
+    <td data-label="Featured">{% if d.featured %}Yes{% else %}No{% endif %}</td>
+    <td data-label="Actions" class="row-actions">
+      <a class="btn btn--outline btn--sm" href="{% url 'panel:destination_edit' d.pk %}">Edit</a>
+      <a class="btn btn--ghost btn--sm" href="{{ d.get_absolute_url }}">View</a>
+      <form method="post" action="{% url 'panel:destination_delete' d.pk %}" data-confirm="Delete the destination “{{ d.name }}”? This cannot be undone.">
+        {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button class="btn btn--danger btn--sm" type="submit">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% include "partials/pager.html" %}
+{% else %}
+<div class="empty"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-pin"/></svg><h2>No destinations found</h2><p>Add one, or change the filters.</p><a class="btn btn--sun" href="{% url 'panel:destination_create' %}">Add destination</a></div>
+{% endif %}
+{% endblock %}

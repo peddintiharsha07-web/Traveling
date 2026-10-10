@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Community | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="page-head page-head--short">
+  <div class="container">
+    <h1>Community reports</h1>
+    <p>Problems travelers chose to share. Open one to read replies or add your own advice.</p>
+  </div>
+</section>
+<section class="section section--flush">
+  <div class="container">
+    <form class="filters" method="get" action="{% url 'core:community' %}" role="search">
+      <div class="search">
+        <label class="sr-only" for="q">Search community reports</label>
+        <svg class="icon search__icon" aria-hidden="true"><use href="#i-search"/></svg>
+        <input class="search__input" id="q" name="q" type="search" value="{{ q }}" maxlength="80" placeholder="Search title, place, or details" autocomplete="off">
+        <select class="input" name="category" aria-label="Category" style="max-width:15rem">
+          <option value="">All categories</option>
+          {% for value, label in categories %}<option value="{{ value }}"{% if category == value %} selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+        <button class="btn btn--sun search__btn" type="submit">Search</button>
+      </div>
+    </form>
+    <p class="result-count" role="status">{{ total }} report{{ total|pluralize }} found{% if q or category %}. <a href="{% url 'core:community' %}">Clear filters</a>{% endif %}</p>
+    {% if reports %}
+    <ul class="grid grid--problems grid--wide">
+      {% for r in reports %}
+      <li>
+        <a class="problem problem--report" href="{{ r.get_absolute_url }}">
+          <span class="problem__text">
+            <strong>{{ r.title }}</strong>
+            <span>{{ r.location }} &middot; {{ r.date_of_problem|date:"M j, Y" }}</span>
+            <span>{{ r.description|truncatechars:110 }}</span>
+            <span class="problem__foot">{% include "partials/status_badge.html" %} <span>{{ r.reply_count }} repl{{ r.reply_count|pluralize:"y,ies" }} &middot; by {{ r.user.username }}</span></span>
+          </span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% include "partials/pager.html" %}
+    {% else %}
+    <div class="empty">
+      <svg class="icon icon--xl" aria-hidden="true"><use href="#i-compass"/></svg>
+      <h2>{% if q or category %}No reports match{% else %}Nothing shared yet{% endif %}</h2>
+      <p>{% if q or category %}Try a broader search or a different category.{% else %}When a traveler shares a report, it appears here.{% endif %}</p>
+      <a class="btn btn--outline" href="{% url 'core:report_create' %}">Report a problem</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

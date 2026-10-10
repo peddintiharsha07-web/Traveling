@@ -1,0 +1,28 @@
+{# Inline scenic art by category. Replace with real photos in the next step (image field on Destination). #}
+<svg class="scene scene--{{ kind }}" viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <rect width="400" height="250" fill="var(--sky)"/>
+  {% if kind == "mountains" %}
+    <circle cx="310" cy="60" r="22" fill="var(--sun)"/>
+    <path d="M0 190 L90 80 L150 150 L220 50 L310 170 L360 120 L400 170 V250 H0Z" fill="var(--far)"/>
+    <path d="M0 220 L70 150 L130 200 L210 120 L290 210 L350 170 L400 215 V250 H0Z" fill="var(--near)"/>
+    <path d="M220 50 L200 78 L212 74 L222 86 L232 72 L242 78Z" fill="#fff" opacity=".9"/>
+  {% elif kind == "beaches" %}
+    <circle cx="200" cy="120" r="34" fill="var(--sun)"/>
+    <rect y="125" width="400" height="75" fill="var(--far)"/>
+    <path d="M0 150 q25 -8 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0" stroke="#fff" stroke-opacity=".5" stroke-width="3" fill="none"/>
+    <path d="M0 200 Q120 170 250 195 T400 185 V250 H0Z" fill="var(--near)"/>
+  {% elif kind == "historical" %}
+    <circle cx="90" cy="70" r="20" fill="var(--sun)"/>
+    <path d="M60 210 V110 h280 V210Z" fill="var(--far)"/>
+    <path d="M60 110 L200 60 L340 110Z" fill="var(--far)"/>
+    <g fill="var(--sky)"><rect x="90" y="140" width="24" height="70" rx="12"/><rect x="150" y="140" width="24" height="70" rx="12"/><rect x="226" y="140" width="24" height="70" rx="12"/><rect x="286" y="140" width="24" height="70" rx="12"/></g>
+    <rect y="210" width="400" height="40" fill="var(--near)"/>
+  {% else %}
+    <circle cx="80" cy="60" r="18" fill="var(--sun)"/>
+    <path d="M0 200 L120 70 L200 160 L260 100 L400 210 V250 H0Z" fill="var(--far)"/>
+    <g fill="var(--near)">
+      <path d="M40 240 L60 180 L80 240Z"/><path d="M90 245 L115 170 L140 245Z"/><path d="M160 240 L180 190 L200 240Z"/>
+      <path d="M250 245 L275 175 L300 245Z"/><path d="M310 240 L330 185 L350 240Z"/><path d="M355 245 L375 195 L395 245Z"/>
+    </g>
+  {% endif %}
+</svg>

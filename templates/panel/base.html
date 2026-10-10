@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{% block panel_title %}Admin{% endblock %} | Admin panel{% endblock %}
+{% block content %}
+<div class="panel-shell">
+  <aside class="panel-nav" aria-label="Admin sections">
+    <p class="panel-nav__title">Admin panel</p>
+    <ul>
+      <li><a href="{% url 'panel:dashboard' %}"{% if section == 'dashboard' %} aria-current="page"{% endif %}>Dashboard</a></li>
+      <li><a href="{% url 'panel:report_list' %}"{% if section == 'reports' %} aria-current="page"{% endif %}>Reports{% if nav_new_reports %} <span class="count-pill">{{ nav_new_reports }}</span>{% endif %}</a></li>
+      <li><a href="{% url 'panel:user_list' %}"{% if section == 'users' %} aria-current="page"{% endif %}>Users</a></li>
+      <li><a href="{% url 'panel:destination_list' %}"{% if section == 'destinations' %} aria-current="page"{% endif %}>Destinations</a></li>
+      <li><a href="{% url 'panel:problem_list' %}"{% if section == 'problems' %} aria-current="page"{% endif %}>Problem guides</a></li>
+      <li><a href="{% url 'panel:message_list' %}"{% if section == 'messages' %} aria-current="page"{% endif %}>Messages{% if nav_unread_messages %} <span class="count-pill">{{ nav_unread_messages }}</span>{% endif %}</a></li>
+      <li><a href="{% url 'panel:activity_list' %}"{% if section == 'activity' %} aria-current="page"{% endif %}>Activity log</a></li>
+    </ul>
+    {% if user.is_superuser %}<a class="panel-nav__ext" href="{% url 'admin:index' %}">Django admin &rarr;</a>{% endif %}
+  </aside>
+  <div class="panel-main">
+    {% block panel_content %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

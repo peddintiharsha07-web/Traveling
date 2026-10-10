@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Travel Problems | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="page-head page-head--short">
+  <div class="container">
+    <h1>Travel problems and solutions</h1>
+    <p>Choose the situation closest to yours for steps, contacts, and what to keep as proof.</p>
+  </div>
+</section>
+<section class="section section--flush">
+  <div class="container">
+    {% if problems %}
+    <ul class="grid grid--problems">
+      {% for p in problems %}
+      <li>
+        <a class="problem" href="{{ p.get_absolute_url }}">
+          <span class="problem__icon"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-{{ p.icon }}"/></svg></span>
+          <span class="problem__text"><strong>{{ p.title }}</strong><span>{{ p.blurb }}</span></span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty">
+      <svg class="icon icon--xl" aria-hidden="true"><use href="#i-compass"/></svg>
+      <h2>No guides yet</h2>
+      <p>Run <code>python manage.py seed_content</code> or add problems in the admin.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

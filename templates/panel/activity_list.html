@@ -1,0 +1,30 @@
+{% extends "panel/base.html" %}
+{% block panel_title %}Activity log{% endblock %}
+{% block panel_content %}
+<h1 class="panel-h1">Activity log</h1>
+<form class="toolbar" method="get" role="search">
+  <label class="sr-only" for="q">Search activity</label>
+  <input class="input" id="q" name="q" type="search" value="{{ q }}" maxlength="80" placeholder="Search user, action, or detail">
+  <button class="btn btn--sun" type="submit">Apply</button>
+  {% if q %}<a class="btn btn--ghost" href="{% url 'panel:activity_list' %}">Reset</a>{% endif %}
+</form>
+<p class="result-count" role="status">{{ total }} entr{{ total|pluralize:"y,ies" }}</p>
+{% if page_obj %}
+<table class="reports">
+  <thead><tr><th scope="col">When</th><th scope="col">User</th><th scope="col">Action</th><th scope="col">Detail</th></tr></thead>
+  <tbody>
+  {% for a in page_obj %}
+  <tr>
+    <td data-label="When">{{ a.created_at|date:"M j, Y, g:i a" }}</td>
+    <td data-label="User">{% if a.user %}{{ a.user.username }}{% else %}<em>deleted user</em>{% endif %}</td>
+    <td data-label="Action">{{ a.action }}</td>
+    <td data-label="Detail">{{ a.detail|default:"—" }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% include "partials/pager.html" %}
+{% else %}
+<div class="empty"><svg class="icon icon--xl" aria-hidden="true"><use href="#i-compass"/></svg><h2>No activity yet</h2><p>User and admin actions are recorded here.</p></div>
+{% endif %}
+{% endblock %}

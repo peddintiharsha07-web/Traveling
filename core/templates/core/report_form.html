@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit report{% else %}Report a problem{% endif %} | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="page-head page-head--short">
+  <div class="container">
+    <h1>{% if editing %}Edit your report{% else %}Report a travel problem{% endif %}</h1>
+    <p>{% if editing %}You can change a report until our team starts reviewing it.{% else %}Tell us what happened. Reports are private unless you choose to share them. In an emergency, call your local emergency number first.{% endif %}</p>
+  </div>
+</section>
+<section class="section section--flush">
+  <div class="container container--narrow">
+    <form class="form-card" method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="form-alert" role="alert">{% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}</div>{% endif %}
+      <div class="form-grid">
+        <div class="form-grid__wide">{% include "partials/field.html" with field=form.title %}</div>
+        {% include "partials/field.html" with field=form.category %}
+        {% include "partials/field.html" with field=form.date_of_problem %}
+        <div class="form-grid__wide">{% include "partials/field.html" with field=form.location %}</div>
+        <div class="form-grid__wide">{% include "partials/field.html" with field=form.description %}</div>
+        <div class="form-grid__wide">{% include "partials/field.html" with field=form.image %}</div>
+        <div class="form-grid__wide">{% include "partials/field.html" with field=form.share_with_community %}</div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn--sun btn--lg" type="submit" data-loading="Saving…">{% if editing %}Save changes{% else %}Submit report{% endif %}</button>
+        <a class="btn btn--ghost btn--lg" href="{% if editing %}{{ report.get_absolute_url }}{% else %}{% url 'core:dashboard' %}{% endif %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,39 @@
+<header class="nav" id="site-nav">
+  <div class="container nav__inner">
+    <a class="nav__brand" href="{% url 'core:home' %}" aria-label="Travelers Often Face Unexpected Problems, home">
+      <svg class="icon icon--lg" aria-hidden="true"><use href="#i-compass"/></svg>
+      <span>Unexpected<span class="nav__brand-sub"> Travel</span></span>
+    </a>
+
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu">
+      <svg class="icon icon--lg nav__icon-open" aria-hidden="true"><use href="#i-menu"/></svg>
+      <svg class="icon icon--lg nav__icon-close" aria-hidden="true"><use href="#i-close"/></svg>
+    </button>
+
+    <nav class="nav__menu" id="nav-menu" aria-label="Main">
+      <ul class="nav__links">
+        <li><a href="{% url 'core:home' %}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>Home</a></li>
+        <li><a href="{% url 'core:destinations' %}"{% if request.resolver_match.url_name == 'destinations' or request.resolver_match.url_name == 'destination_detail' %} aria-current="page"{% endif %}>Destinations</a></li>
+        <li><a href="{% url 'core:problems' %}"{% if request.resolver_match.url_name == 'problems' or request.resolver_match.url_name == 'problem_detail' %} aria-current="page"{% endif %}>Travel Problems</a></li>
+        <li><a href="{% url 'core:find_help' %}"{% if request.resolver_match.url_name == 'find_help' %} aria-current="page"{% endif %}>Find Help</a></li>
+        <li><a href="{% url 'core:about' %}"{% if request.resolver_match.url_name == 'about' %} aria-current="page"{% endif %}>About</a></li>
+        <li><a href="{% url 'core:contact' %}"{% if request.resolver_match.url_name == 'contact' %} aria-current="page"{% endif %}>Contact</a></li>
+        <li><a class="nav__search" href="{% url 'core:search' %}" aria-label="Search the site"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span class="nav__search-text">Search</span></a></li>
+      </ul>
+      <div class="nav__auth">
+        {% if user.is_authenticated %}
+        {% if user.is_staff %}<a class="btn btn--ghost" href="{% url 'panel:dashboard' %}">Admin panel</a>{% endif %}
+        <a class="btn btn--ghost" href="{% url 'core:notifications' %}" aria-label="Notifications{% if unread_notifications %}, {{ unread_notifications }} unread{% endif %}">Alerts{% if unread_notifications %} <span class="count-pill">{{ unread_notifications }}</span>{% endif %}</a>
+        <a class="btn btn--ghost" href="{% url 'core:dashboard' %}">Dashboard</a>
+        <form method="post" action="{% url 'core:logout' %}">
+          {% csrf_token %}
+          <button class="btn btn--sun" type="submit">Log out</button>
+        </form>
+        {% else %}
+        <a class="btn btn--ghost" href="{% url 'core:login' %}">Log in</a>
+        <a class="btn btn--sun" href="{% url 'core:register' %}">Register</a>
+        {% endif %}
+      </div>
+    </nav>
+  </div>
+</header>

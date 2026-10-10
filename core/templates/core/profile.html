@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Your profile | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="page-head page-head--short">
+  <div class="container"><h1>Your profile</h1><p>Signed in as <strong>{{ user.username }}</strong>.</p></div>
+</section>
+<section class="section section--flush">
+  <div class="container container--narrow">
+    <form class="form-card" method="post" novalidate>
+      {% csrf_token %}
+      <div class="form-grid">
+        {% include "partials/field.html" with field=user_form.first_name %}
+        {% include "partials/field.html" with field=user_form.last_name %}
+        <div class="form-grid__wide">{% include "partials/field.html" with field=user_form.email %}</div>
+        <div class="form-grid__wide">{% include "partials/field.html" with field=profile_form.home_country %}</div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn--sun btn--lg" type="submit" data-loading="Saving…">Save profile</button>
+        <a class="btn btn--ghost btn--lg" href="{% url 'core:password_change' %}">Change password</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

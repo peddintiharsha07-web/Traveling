@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Find Help | Travelers Often Face Unexpected Problems{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+{% endblock %}
+{% block content %}
+<section class="page-head page-head--short">
+  <div class="container">
+    <h1>Find nearby help</h1>
+    <p>Pick a service, then share your location or search for a place. In an emergency, call your local emergency number first.</p>
+  </div>
+</section>
+
+<section class="section section--flush">
+  <div class="container" id="find-help" data-initial-type="{{ selected }}">
+    <div class="form-card finder__controls">
+      <fieldset class="finder__types">
+        <legend>What do you need?</legend>
+        <div class="chips">
+          {% for h in help_types %}
+          <button class="chip" type="button" data-type="{{ h.key }}" aria-pressed="{% if h.key == selected %}true{% else %}false{% endif %}">
+            <svg class="icon icon--sm" aria-hidden="true"><use href="#i-{{ h.icon }}"/></svg>{{ h.label }}
+          </button>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <div class="finder__where">
+        <button class="btn btn--sun" type="button" id="locate-btn">
+          <svg class="icon" aria-hidden="true"><use href="#i-locate"/></svg> Use my location
+        </button>
+        <form class="search finder__search" id="place-form" role="search">
+          <label class="sr-only" for="place">Search for a town, address, or landmark</label>
+          <svg class="icon search__icon" aria-hidden="true"><use href="#i-search"/></svg>
+          <input class="search__input" id="place" type="search" maxlength="120" placeholder="Or search a town or address" autocomplete="off">
+          <button class="btn btn--outline search__btn" type="submit">Search</button>
+        </form>
+        <div class="finder__radius">
+          <label for="radius">Within</label>
+          <select class="input" id="radius">
+            <option value="1000">1 km</option>
+            <option value="3000" selected>3 km</option>
+            <option value="5000">5 km</option>
+            <option value="10000">10 km</option>
+            <option value="20000">20 km</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <p class="finder__status" id="status" role="status" aria-live="polite">Share your location or search for a place to see results.</p>
+
+    <div class="finder__layout">
+      <div class="finder__map">
+        <div id="map" role="region" aria-label="Map of nearby places"></div>
+      </div>
+      <div class="finder__list">
+        <h2 id="results-title" class="side-title">Results</h2>
+        <ol class="results" id="results" aria-labelledby="results-title"></ol>
+      </div>
+    </div>
+
+    <p class="finder__note">Places come from OpenStreetMap contributors and may be incomplete or out of date. Confirm opening hours and details by phone when you can. Your coordinates are sent from your browser to the map services to find places; our server does not receive or store them.</p>
+  </div>
+</section>
+{{ map_config|json_script:"map-config" }}
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
+<script src="{% static 'js/find_help.js' %}" defer></script>
+{% endblock %}

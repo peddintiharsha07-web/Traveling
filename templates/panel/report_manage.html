@@ -1,0 +1,53 @@
+{% extends "panel/base.html" %}
+{% block panel_title %}{{ report.title }}{% endblock %}
+{% block panel_content %}
+<p class="detail-hero__crumb"><a href="{% url 'panel:report_list' %}">&larr; Back to reports</a></p>
+<h1 class="panel-h1">{{ report.title }}</h1>
+<p class="report-meta">{% include "partials/status_badge.html" with r=report %}
+  <span>{{ report.get_category_display }}</span><span>{{ report.location }}</span><span>{{ report.date_of_problem|date:"M j, Y" }}</span>
+  <span>by {{ report.user.username }}</span>
+</p>
+
+<div class="detail">
+  <div class="detail__main">
+    <h2>What happened</h2>
+    <p class="prose pre-line">{{ report.description }}</p>
+    {% if report.image %}<figure class="report-image"><img src="{% url 'core:report_image' report.pk %}" alt="Photo attached to this report" loading="lazy"></figure>{% endif %}
+
+    <h2>Replies ({{ responses|length }})</h2>
+    {% if responses %}
+    <ul class="replies">
+      {% for resp in responses %}
+      <li class="reply">
+        <p class="reply__meta"><strong>{{ resp.author.username }}</strong>{% if resp.author.is_staff %} <span class="badge badge--staff">Team</span>{% endif %} <span>{{ resp.created_at|date:"M j, Y" }}</span></p>
+        <p class="pre-line">{{ resp.body }}</p>
+        <form method="post" action="{% url 'panel:reply_delete' resp.pk %}" data-confirm="Remove this reply?">{% csrf_token %}<button class="btn btn--danger btn--sm" type="submit">Remove reply</button></form>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}<p class="empty-inline">No replies yet.</p>{% endif %}
+  </div>
+
+  <aside class="detail__side">
+    <form class="form-card" method="post" novalidate>
+      {% csrf_token %}
+      <h2 class="side-title">Update this report</h2>
+      {% if form.non_field_errors %}<div class="form-alert" role="alert">{% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}</div>{% endif %}
+      {% include "partials/field.html" with field=form.status %}
+      {% include "partials/field.html" with field=form.staff_note %}
+      <p class="muted-sm">The traveler is notified when the status or the update changes.</p>
+      <button class="btn btn--sun btn--block" type="submit" data-loading="Saving…">Save update</button>
+    </form>
+    <div class="panel">
+      <h2 class="side-title">Details</h2>
+      <p class="panel__row"><span>Submitted</span> {{ report.created_at|date:"M j, Y" }}</p>
+      <p class="panel__row"><span>Last updated</span> {{ report.updated_at|date:"M j, Y" }}</p>
+      <p class="panel__row"><span>Visibility</span> {% if report.share_with_community %}Shared{% else %}Private{% endif %}</p>
+      <p class="panel__row"><span>Traveler</span> <a href="{% url 'panel:user_edit' report.user.pk %}">{{ report.user.username }}</a></p>
+    </div>
+    <form method="post" action="{% url 'panel:report_delete' report.pk %}" data-confirm="Delete this report and its replies? This cannot be undone.">
+      {% csrf_token %}<button class="btn btn--danger btn--block" type="submit">Delete report</button>
+    </form>
+  </aside>
+</div>
+{% endblock %}

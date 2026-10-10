@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Create account | Travelers Often Face Unexpected Problems{% endblock %}
+{% block content %}
+<section class="auth">
+  <div class="auth__art dest__media--beaches" aria-hidden="true">
+    {% include "partials/scene.html" with kind="beaches" %}
+    <div class="auth__art-text"><p>Report a problem, follow its status, and read advice from other travelers.</p></div>
+  </div>
+  <div class="auth__panel">
+    <div class="auth__card">
+      <h1>Create your account</h1>
+      <p class="auth__sub">Already registered? <a href="{% url 'core:login' %}">Log in</a></p>
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="form-alert" role="alert">{% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}</div>{% endif %}
+        {% include "partials/field.html" with field=form.username %}
+        {% include "partials/field.html" with field=form.email %}
+        {% include "partials/field.html" with field=form.password1 %}
+        {% include "partials/field.html" with field=form.password2 %}
+        <button class="btn btn--sun btn--lg btn--block" type="submit">Create account</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
