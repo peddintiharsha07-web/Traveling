@@ -31,8 +31,11 @@ if not DEBUG and (SECRET_KEY.startswith("dev-only") or SECRET_KEY.startswith("ch
         "print(get_random_secret_key())\""
     )
 
-ALLOWED_HOSTS = [h.strip() for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",") if h.strip()]
-
+ALLOWED_HOSTS = [
+    "travelings-waz0.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 # Find Help uses OpenStreetMap-based services by default (no API key needed).
 # Override any of these in .env to point at your own tile or search provider.
 MAP_CONFIG = {
